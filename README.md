@@ -107,6 +107,24 @@ Na Coral: `python3 -m pub.events`. O tópico é `coral/esp32/events`, separado d
 do display e sem retenção. Veja [sub/README.md](sub/README.md) para integrar funções ao
 firmware, usar a fila e compartilhar o I²C, e [pub/README.md](pub/README.md) para consumir eventos.
 
+## LoRa (versão 1.4)
+
+O firmware também repete pelo rádio E32 (433 MHz, modo transparente) tudo que aparece no
+OLED, para um receptor distante. Cada mensagem vira uma linha `#n região: texto`, com a
+região `azul`, `amarelo` ou `texto` e até 45 caracteres por pacote. Uma tela nova sai em até
+1 s e a tela atual se repete a cada 5 s, então o receptor acompanha o enlace mesmo sem
+mensagem nova. No modo relógio sai `(relogio na tela)`.
+
+A fiação é a mesma de `tests/lora_e32`. TXD do E32 no GPIO35, RXD no GPIO2, AUX no GPIO34,
+M0 e M1 em ponte no GPIO5 e VCC nos 5 V. O firmware não altera a configuração do módulo.
+Para ler ou restaurar o padrão de fábrica e para testar alcance, use o sketch `tests/lora_e32`.
+
+No PC, o receptor é outro E32 num conversor CP2102, com M0 e M1 no GND.
+
+```sh
+python3 tests/lora_e32/receiver.py --log lora.csv
+```
+
 ## Comportamento
 
 - Texto centralizado horizontal e verticalmente, com rotação de 180° para a montagem usada.

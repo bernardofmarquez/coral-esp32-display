@@ -1,6 +1,10 @@
 #include "display_service.h"
+#include "lora_link.h"
 
 void setup() {
+  // Radio first: it only takes UART2 and GPIO 2, 5, 34 and 35, and the display service
+  // hands it every new screen. The display keeps working if the radio does not start.
+  LoraLink::begin();
   // Owns Serial, OLED, RTC and the shared I2C initialization in a separate task.
   if (!CoralDisplay::begin()) {
     // Do not continue with a partially initialized service.

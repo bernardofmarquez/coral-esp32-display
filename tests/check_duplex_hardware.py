@@ -8,7 +8,7 @@ def main():
     events = []
     with Display(on_event=events.append) as display:
         initial = display.status()
-        assert initial['firmware'] == 'coral-display/1.3', initial
+        assert initial['firmware'] == 'coral-display/1.4', initial
         started = time.monotonic()
         requests = 0
         while time.monotonic() - started < 12:

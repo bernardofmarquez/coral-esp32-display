@@ -8,6 +8,7 @@
 #include <ArduinoJson.h>
 #include <Preferences.h>
 #include "text_layout.h"
+#include "lora_link.h"
 
 namespace {
 QueueHandle_t inbox = nullptr;
@@ -146,6 +147,24 @@ void draw() {
   oled.display();
 }
 
+// Hands what the OLED shows to the LoRa link: one line per message, region first.
+void forwardScreen() {
+  String lines;
+  auto add = [&lines](const char *label, String value) {
+    value.replace("\n", " / ");
+    lines += label; lines += value; lines += '\n';
+  };
+  if (mode == "regions") {
+    for (uint8_t i = 0; i < blueCount; ++i) if (blue[i].length()) add("azul: ", blue[i]);
+    for (uint8_t i = 0; i < yellowCount; ++i) if (yellow[i].length()) add("amarelo: ", yellow[i]);
+  } else if (mode == "text" && text.length()) {
+    add("texto: ", text);
+  } else if (mode == "clock") {
+    lines = "(relogio na tela)";
+  }
+  LoraLink::setScreen(lines.c_str());
+}
+
 void emitEvent(JsonDocument &event) {
   event["type"] = "event";
   event["boot_id"] = bootId;
@@ -159,7 +178,7 @@ void respond(const char *id, bool ok, const char *error = nullptr) {
   out["id"] = id;
   out["ok"] = ok;
   out["type"] = "ack";
-  out["firmware"] = "coral-display/1.3";
+  out["firmware"] = "coral-display/1.4";
   out["boot_id"] = bootId;
   out["service_task"] = pcTaskGetName(nullptr);
   out["stack_free_min"] = uxTaskGetStackHighWaterMark(nullptr);
@@ -246,6 +265,7 @@ void handle() {
   pageStart = nextPage = 0;
   blueCursor = RegionCursor(); yellowCursor = RegionCursor();
   draw();
+  forwardScreen();
   respond(id, probe(address), probe(address) ? nullptr : "oled_disconnected");
 }
 
@@ -273,6 +293,7 @@ void initialize() {
   }
   input.reserve(MAX_FRAME);
   draw();
+  forwardScreen();
   respond("boot", displayReady, displayReady ? nullptr : "oled_unavailable");
 }
 

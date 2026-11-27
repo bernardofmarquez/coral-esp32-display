@@ -117,6 +117,7 @@ Referências: [Mosquitto](https://mosquitto.org/download/),
 - `display_service.cpp`: tarefa `coral-display`, fila de 8 entradas copiadas, protocolo,
   persistência, OLED e RTC. Pilha de 12 KiB, prioridade 1, sem fixar núcleo.
 - `text_layout.h`: cálculo das duas áreas e da paginação.
+- `lora_link.cpp/.h` (1.4): tarefa `lora-link`, que repete a tela pelo E32 sem atrasar o display.
 
 A inicialização espera a tarefa preparar Serial e Wire. O buffer de recepção UART tem 4096 bytes, acomodando um comando completo durante
 uma transmissão. O serviço limita a leitura

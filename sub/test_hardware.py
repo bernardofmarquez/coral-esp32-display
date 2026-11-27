@@ -11,7 +11,7 @@ def main():
     events = []
     with Display(on_event=events.append) as display:
         initial = display.status()
-        assert initial['firmware'] == 'coral-display/1.3', initial
+        assert initial['firmware'] == 'coral-display/1.4', initial
         assert initial['service_task'] == 'coral-display' and initial['boot_id'], initial
         boot_id = initial['boot_id']
         assert initial['oled'] and initial['address'] in (60, 61), initial
